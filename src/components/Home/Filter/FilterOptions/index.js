@@ -7,12 +7,12 @@ import InputTextWithSearch from "commons/Form/InputFields/InputTextWithSearch";
 import Checkbox from "commons/Form/Checkbox";
 
 const options = [
-  { text: "Bold", value: "bold" },
-  { text: "Italic", value: "italic" },
-  { text: "Normal", value: "normal" },
-  { text: "Underline", value: "underline" },
-  { text: "Linethrough", value: "linethrough" },
-  { text: "Overline", value: "overline" }
+  { label: "Bold", value: "bold" },
+  { label: "Italic", value: "italic" },
+  { label: "Normal", value: "normal" },
+  { label: "Underline", value: "underline" },
+  { label: "Linethrough", value: "linethrough" },
+  { label: "Overline", value: "overline" }
 ];
 
 const colors = [
@@ -40,13 +40,8 @@ class Filtering extends React.Component {
   render() {
     return (
       <Options>
-        <Field
-          name="opacity_change"
-          component={Checkbox}
-          type="radio"
-          onChange={(e, val) => this.props.opacityChange(val)}
-          label="Opacity"
-        />
+        <label>Opacity</label>
+        <input type="radio" name="opacity_change" onChange={(e, val) => this.props.opacityChange(val)} />
         <WidgetWrapper>
           <Field
             name="text_filter"

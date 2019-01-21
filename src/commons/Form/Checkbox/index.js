@@ -51,7 +51,7 @@ const Span = styled.span`
 `;
 
 const Checkbox = ({ input, label, meta: { touched, error } }) => {
-  console.log('input', input);
+  // console.log('input', input);
 
   // return (
   //   <CheckboxContainer>

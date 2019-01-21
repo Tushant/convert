@@ -1,7 +1,9 @@
 import React from "react";
+import { connect } from 'react-redux';
 import styled from "styled-components";
 
 import { SELECT_IMAGE } from "actions/types";
+import { selectImage } from "actions";
 import imagesReducer from "reducers/images";
 import images from "./list";
 
@@ -19,7 +21,7 @@ const Image = styled.img`
 `;
 
 const Images = props => {
-  const [_, dispatch] = React.useReducer(imagesReducer, []);
+  // const [_, dispatch] = React.useReducer(imagesReducer, []);
   return (
     <React.Fragment>
       <Wrapper>
@@ -28,7 +30,7 @@ const Images = props => {
             key={image.id}
             src={image.image}
             alt={image.category}
-            onClick={() => dispatch({ type: SELECT_IMAGE, payload: image })}
+            onClick={() => props.selectImage(image)}
           />
         ))}
       </Wrapper>
@@ -36,4 +38,6 @@ const Images = props => {
   );
 };
 
-export default Images;
+export default connect(null, dispatch => ({ selectImage: image => dispatch(selectImage(image))}))(Images);
+// export default Images;
+// onClick={() => dispatch({ type: SELECT_IMAGE, payload: image })}
