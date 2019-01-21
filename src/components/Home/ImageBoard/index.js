@@ -1,10 +1,17 @@
 import React from "react";
+import styled from 'styled-components'
 import { connect } from 'react-redux';
 import { fabric } from "fabric";
 
+import { Box } from 'commons/styled';
 import imagesReducer from "reducers/images";
 import Filter from "components/Home/Filter";
 import { Wrapper, CanvasWrapper, Row, Column } from "./styled";
+
+const SBox = styled(Box)`
+  width: 100%;
+  background: #f4f4f4;
+`;
 
 class ImageBoard extends React.Component {
   constructor() {
@@ -118,116 +125,192 @@ class ImageBoard extends React.Component {
 
   opacityChange = val => {
     console.log('val', val)
-    this.canvas.backgroundImage.setOpacity(val / 100);
-    this.canvas.renderAll();
+    // this.canvas.backgroundImage.setOpacity(val / 100);
+    // this.canvas.renderAll();
   }
 
-  applyTextFilter = val => {
-    console.log("val", val.value);
-    const object = this.state.selected.canvas.getActiveObject();
-    val.value.forEach(val => {
-      if (val === "bold") {
-        object.set("fontWeight", 900);
-      } else if (val === "normal") {
-        object.set("fontWeight", 400);
-      } else if (val === "italic") {
-        object.set("fontStyle", "italic");
-      } else if (val === "overline") {
-        object.set("textDecoration", "overline");
-      } else if (val === "underline") {
-        object.set("textDecoration", "underline");
-      } else if (val === "linethrough") {
-        object.set("textDecoration", "line-through");
-      }
-      this.state.canvas.renderAll();
-    });
+  applyFontStyle = values => {
+    const { selected } = this.state;
+    if (selected !== undefined) {
+      const object = selected.canvas.getActiveObject();
+      values.forEach(val => {
+        console.log('val -->', val);
+        switch(val.value) {
+          case "bold":
+            debugger;
+            object.set("fontWeight", 'bold');
+            break;
+          case "normal":
+            object.set("fontWeight", 'normal');
+            break;
+          case "italic":
+            object.set("fontStyle", "italic");
+            break;
+          case "overline":
+            object.set("textDecoration", "overline");
+            break;
+          case "underline":
+            object.set("textDecoration", "underline");
+            break;
+          case "linethrough":
+            object.set("textDecoration", "line-through");
+            break;
+          default:
+            break;
+        }
+        this.canvas.renderAll();
+      });
+    } else {
+      this.setState({
+        error: 'You need to select the text first'
+      })
+    }
+  }
+
+  applyFontSize = size => {
+    const { selected } = this.state;
+    if (selected !== undefined) {
+      const object = selected.canvas.getActiveObject();
+      object.set("fontSize", size.value);
+      this.canvas.renderAll();
+    } else {
+      this.setState({
+        error: 'You need to select the text first'
+      })
+    }
+  }
+
+  applyFontFamily = font => {
+    const { selected } = this.state;
+    if (selected !== undefined) {
+      const object = selected.canvas.getActiveObject();
+      object.set("fontFamily", font.value);
+      this.canvas.renderAll();
+    } else {
+      this.setState({
+        error: 'You need to select the text first'
+      })
+    }
   }
 
   applyColor = e => {
-    console.log('applyColor', this.canvas);
     if (this.state.selected !== undefined) {
       this.state.selected.setColor(e.hex);
       this.canvas.renderAll();
     } else {
-      console.log('this canvas', this.canvas)
+      this.setState({
+        error: 'You need to select the text first'
+      })
+    }
+  }
+
+  applyBackgroundColor = e => {
       if (this.canvas.backgroundImage) {
         this.canvas.backgroundImage = 0;
       }
       this.canvas.backgroundColor = e.hex;
       this.canvas.renderAll();
+  }
+
+  applyGrayScale = (checked, value = "average") => {
+    const { selected } = this.state;
+    if (selected !== undefined) {
+      const obj = selected.canvas.getActiveObject();
+      if (checked) {
+        obj.filters[0] = new fabric.Image.filters.Grayscale();
+        obj.applyFilters();
+        this.canvas.renderAll();
+      } else {
+        obj.filters = [];
+        obj.applyFilters();
+        this.canvas.renderAll();
+      }
+    } else {
+      const obj = this.canvas.backgroundImage;
+      if (obj && checked) {
+        obj.filters[0] = new fabric.Image.filters.Grayscale();
+        obj.applyFilters();
+        this.canvas.renderAll();
+      } else {
+        obj.filters = [];
+        obj.applyFilters();
+        this.canvas.renderAll();
+      }
     }
   }
 
-  applyBlur = e => {
+  applyBlur = value => {
     const object = this.canvas.backgroundImage;
-    object.filters[0] = new fabric.Image.filters.Convolute({
-      matrix: [
-        1 / 36,
-        1 / 36,
-        1 / 36,
-        1 / 36,
-        1 / 36,
-        1 / 36,
-        1 / 36,
-        1 / 36,
-        1 / 36,
-        1 / 36,
-        1 / 36,
-        1 / 36,
-        1 / 36,
-        1 / 36,
-        1 / 36,
-        1 / 36,
-        1 / 36,
-        1 / 36,
-        1 / 36,
-        1 / 36,
-        1 / 36,
-        1 / 36,
-        1 / 36,
-        1 / 36,
-        1 / 36,
-        1 / 36,
-        1 / 36,
-        1 / 36,
-        1 / 36,
-        1 / 36,
-        1 / 36,
-        1 / 36,
-        1 / 36,
-        1 / 36,
-        1 / 36,
-        1 / 36
-      ]
+    object.filters[0] = new fabric.Image.filters.Blur({
+      blur: parseFloat(value/5)
     });
-    object.applyFilters(this.canvas.renderAll.bind(this.canvas));
+    object.applyFilters();
+    this.canvas.renderAll();
+  }
+
+  applyBrightness = value => {
+    const object = this.canvas.backgroundImage;
+    object.filters[0] = new fabric.Image.filters.Brightness({
+      brightness: parseFloat(value/5)
+    });
+    object.applyFilters();
+    this.canvas.renderAll();
+  }
+
+  applyContrast = value => {
+    const object = this.canvas.backgroundImage;
+    // console.log('value', value);
+    // if (value <= 0) {
+    //   object.filters = [];
+    // }
+    object.filters[0] = new fabric.Image.filters.Contrast({
+      contrast: parseFloat(value/5)
+    });
+    object.applyFilters();
+    this.canvas.renderAll();
+  }
+
+  applyOpacity = value => {
+    const object = this.canvas.backgroundImage;
+    object.set({
+        opacity: value
+    });
+    this.canvas.renderAll();
   }
 
   render() {
     return (
       <Wrapper>
         <Row>
-          <Column width={10}>
+          <Column width={80}>
             <CanvasWrapper>
               <canvas
                 id="canvas"
                 ref={el => (this.canvasEl = el)}
-                width={500}
+                width={580}
                 height={400}
                 className="z-depth-1"
               />
             </CanvasWrapper>
           </Column>
-          <Column width={6}>
-            <Filter
-              addText={this.addText}
-              addSubtitle={this.addSubtitle}
-              opacityChange={this.opacityChange}
-              applyTextFilter={this.applyTextFilter}
-              applyColor={this.applyColor}
-              applyBlur={this.applyBlur}
-            />
-          </Column>
+          <SBox>
+            <Column width={20}>
+              <Filter
+                addText={this.addText}
+                addSubtitle={this.addSubtitle}
+                applyOpacity={this.applyOpacity}
+                applyFontStyle={this.applyFontStyle}
+                applyFontSize={this.applyFontSize}
+                applyFontFamily={this.applyFontFamily}
+                applyColor={this.applyColor}
+                applyBackgroundColor={this.applyBackgroundColor}
+                applyBlur={this.applyBlur}
+                applyContrast={this.applyContrast}
+                applyBrightness={this.applyBrightness}
+                applyGrayScale={this.applyGrayScale}
+              />
+            </Column>
+          </SBox>
         </Row>
       </Wrapper>
     );
@@ -348,12 +431,12 @@ export default connect(mapStateToProps)(ImageBoard);
 //     }
 //   }
 //
-//   const opacityChange =val => {
+//   const applyOpacityChange =val => {
 //     canvasState.backgroundImage.setOpacity(val / 100);
 //     canvasState.renderAll();
 //   }
 //
-//   const applyTextFilter = val => {
+//   const applyFontStyle = val => {
 //     console.log("val", val.value);
 //     const object = selected.canvas.getActiveObject();
 //     val.value.forEach(val => {
@@ -444,7 +527,7 @@ export default connect(mapStateToProps)(ImageBoard);
 //            addText={addText}
 //            addSubtitle={addSubtitle}
 //            opacityChange={opacityChange}
-//            applyTextFilter={applyTextFilter}
+//            applyFontStyle={applyFontStyle}
 //            applyColor={applyColor}
 //            applyBlur={applyBlur}
 //          />

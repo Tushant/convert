@@ -56,7 +56,7 @@ const DropdownComponent = () => (
 
 const InputTextWithSearch = ({
   children,
-  input,
+  onChange,
   options,
   isMulti,
   ...props
@@ -69,9 +69,7 @@ const InputTextWithSearch = ({
         clearable={props.clearable}
         searchable={props.searchable}
         options={options}
-        {...input}
-        onChange={input.onChange}
-        onBlur={() => input.onBlur(input.value)}
+        onChange={onChange}
         components={{
           DropdownIndicator: props.selectIcon || DropdownComponent
         }}
@@ -81,18 +79,6 @@ const InputTextWithSearch = ({
     </label>
   );
 };
-
-// InputTextWithSearch.propTypes = {
-//   children   : PropTypes.object,
-//   clearable  : PropTypes.boolean,
-//   input      : PropTypes.object,
-//   isMulti    : PropTypes.boolean,
-//   meta       : PropTypes.object,
-//   options    : PropTypes.object,
-//   placeholder: PropTypes.string,
-//   searchable : PropTypes.boolean,
-//   selectIcon : PropTypes.function,
-// };
 
 InputTextWithSearch.defaultProps = {
   searchable: false,

@@ -1,67 +1,85 @@
 import React from "react";
-import { Field, reduxForm } from "redux-form";
-import { CirclePicker } from "react-color";
+import styled from "styled-components";
+import InputRange from 'react-input-range';
 
-import { Options, WidgetWrapper, Button } from "../styled";
-import InputTextWithSearch from "commons/Form/InputFields/InputTextWithSearch";
 import Checkbox from "commons/Form/Checkbox";
 
-const options = [
-  { label: "Bold", value: "bold" },
-  { label: "Italic", value: "italic" },
-  { label: "Normal", value: "normal" },
-  { label: "Underline", value: "underline" },
-  { label: "Linethrough", value: "linethrough" },
-  { label: "Overline", value: "overline" }
-];
+const SingleWidget = styled.div`
+  margin: 20px 0;
+`;
 
-const colors = [
-  "#f44336",
-  "#e91e63",
-  "#9c27b0",
-  "#673ab7",
-  "#3f51b5",
-  "#2196f3",
-  "#03a9f4",
-  "#00bcd4",
-  "#009688",
-  "#4caf50",
-  "#8bc34a",
-  "#cddc39",
-  "#ffc107",
-  "#ff9800",
-  "#ff5722",
-  "#795548",
-  "#607d8b",
-  "#1ab394"
-];
+const RangeWrapper = styled.div`
+  margin: 35px 16px;
+`;
+
 
 class Filtering extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      opacityValue: 0,
+      blurValue: 0,
+      brightnessValue: 0,
+      contrastValue: 0
+    };
+  }
+  handleCheckboxChange = event => {
+   this.setState({ checked: event.target.checked }, () => {
+     this.props.applyGrayScale(this.state.checked)
+   })
+ }
   render() {
     return (
-      <Options>
-        <label>Opacity</label>
-        <input type="radio" name="opacity_change" onChange={(e, val) => this.props.opacityChange(val)} />
-        <WidgetWrapper>
-          <Field
-            name="text_filter"
-            component={InputTextWithSearch}
-            multiple
-            options={options}
-            onChange={(e, val) => this.props.applyTextFilter(val)}
-          />
-        </WidgetWrapper>
-        <WidgetWrapper>
-          <CirclePicker
-            color={colors}
-            onChange={e => this.props.applyColor(e)}
-          />
-        </WidgetWrapper>
-        <Button onClick={e => this.props.applyBlur(e)}>Gaussian Blur</Button>
-        <Button>GrayScale</Button>
-      </Options>
+      <React.Fragment>
+        <SingleWidget>
+          <label>
+            <Checkbox checked={this.state.checked} onChange={this.handleCheckboxChange} />
+            <span style={{ marginLeft: 8 }}>GrayScale?</span>
+          </label>
+        </SingleWidget>
+        <SingleWidget>
+          <label>Opacity</label>
+          <RangeWrapper>
+            <InputRange
+            maxValue={10}
+            minValue={0}
+            value={this.state.opacityValue}
+            onChange={value => this.setState({ opacityValue: value }, () => this.props.applyOpacity(this.state.opacityValue))} />
+          </RangeWrapper>
+        </SingleWidget>
+        <SingleWidget>
+          <label>Blur</label>
+          <RangeWrapper>
+            <InputRange
+            maxValue={5}
+            minValue={0}
+            value={this.state.blurValue}
+            onChange={value => this.setState({ blurValue: value }, () => this.props.applyBlur(this.state.blurValue))} />
+          </RangeWrapper>
+        </SingleWidget>
+        <SingleWidget>
+          <label>Brightness</label>
+          <RangeWrapper>
+            <InputRange
+            maxValue={5}
+            minValue={0}
+            value={this.state.brightnessValue}
+            onChange={value => this.setState({ brightnessValue: value }, () => this.props.applyBrightness(this.state.brightnessValue))} />
+          </RangeWrapper>
+        </SingleWidget>
+        <SingleWidget>
+          <label>Contrast</label>
+          <RangeWrapper>
+            <InputRange
+            maxValue={5}
+            minValue={0}
+            value={this.state.contrastValue}
+            onChange={value => this.setState({ contrastValue: value }, () => this.props.applyContrast(this.state.contrastValue))} />
+          </RangeWrapper>
+        </SingleWidget>
+      </React.Fragment>
     );
   }
 }
 
-export default reduxForm({ form: "filter" })(Filtering);
+export default Filtering;

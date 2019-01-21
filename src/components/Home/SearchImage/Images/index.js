@@ -8,13 +8,15 @@ import imagesReducer from "reducers/images";
 import images from "./list";
 
 const Wrapper = styled.div`
+  height: calc(100vh - 160px);
   flex: 1;
+  overflow-y: scroll;
 `;
 
 const Image = styled.img`
   display: flex;
   flex: 1;
-  width: 150px;
+  width: 100%;
   max-width: 100%;
   margin: 20px 0;
   cursor: pointer;

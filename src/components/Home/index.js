@@ -23,12 +23,12 @@ const Column = styled.div`
 const Home = () => (
   <React.Fragment>
     <Wrapper>
-      <SBox>
-        <Column width={25}>
+      <Column width={20}>
+        <SBox>
           <SearchImage />
-        </Column>
-      </SBox>
-      <Column width={75}>
+        </SBox>
+      </Column>
+      <Column width={80}>
         <ImageBoard />
       </Column>
     </Wrapper>

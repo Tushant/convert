@@ -3,12 +3,17 @@ import { Provider } from "react-redux";
 import styled from "styled-components";
 
 import Home from "components/Home";
+import Header from "components/App/Header";
 import store from "store";
+
+import "react-input-range/lib/css/index.css";
+
 
 const Main = styled.div`
     display: flex;
     flex-direction: column;
     flex: 1;
+    margin: 2em;
   `,
   Body = styled.div`
     padding-top: 48px;
@@ -18,10 +23,12 @@ const Main = styled.div`
 const App = () => (
   <Provider store={store}>
     <Main>
+      <Header />
       <Body>
-        <x-section>
+        {/* <x-section>
           <Home />
-        </x-section>
+        </x-section> */}
+        <Home />
       </Body>
     </Main>
   </Provider>
