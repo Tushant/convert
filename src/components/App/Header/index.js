@@ -1,6 +1,8 @@
 import React from 'react';
 
 import styled from 'styled-components';
+import { AUTH_USER } from "constants/auth";
+import Menu from './Menu';
 
 const
   HeaderWrapper = styled.div`
@@ -40,6 +42,7 @@ const
         <Wrapper>
           <Container>
             <Logo />
+            <Menu user={JSON.parse(localStorage.getItem(AUTH_USER))} />
           </Container>
         </Wrapper>
       </HeaderWrapper>;
